@@ -1,0 +1,180 @@
+step1:
+create folder
+npm init -y
+npm install express monggose --save
+edit package.json(type,start)
+create index.json
+
+
+step2.checking mongodb connectivity(/dbconnection.js)
+//mongodb://localhost:27017/
+import mongoose from 'mongoose';
+const ConnectionString="mongodb://127.0.0.1:27017/myFirstdb";
+const mongoconnect=async ()=>{
+   try{
+     await mongoose.connect(ConnectionString);
+     console.log("MongoDB Connected");
+   }
+   catch(err){
+      console.log("MongoDb connection error : "+err);
+   }
+}
+export default mongoconnect;
+
+index.js
+import express from 'express';
+import mongoconnect from './dbconnection.js';
+import userRoutes from './routes/userRoutes.js'
+const PORT=8899;
+const app=express();
+
+//check for json data input
+app.use(express.json());
+mongoconnect();
+app.get('/',(req,res)=>{
+    res.end('ser ther is currently working');
+})
+//check for json data input
+app.use('/users',userRoutes);
+app.listen(PORT,(err)=>{
+    if(err) throw err;
+    console.log(`server is currently working in the${PORT}`);
+})
+
+
+step 3
+userschema=/models/userSchema
+import mongoose from "mongoose";
+const userSchema=new mongoose.Schema({
+    firstName:{
+        type:String,
+        required:true
+    },
+    lastName:{
+        type:String,
+        required:true
+    },
+    email:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    password:{
+        type:String,
+        required:true
+    },
+    role:{
+        type:String,
+        required:true,
+        default:'user'
+    }
+},{timestamps:true})
+const userModel=mongoose.model("user",userSchema);
+export default userModel;
+
+step4
+checking the api for header json data
+routes/userRoutes.js
+import express from 'express';
+const router=express.Router();
+router.post("/register",(req,res)=>{
+    let formdata=req.body;
+    console.log(formdata);
+    res.send(JSON.stringify(formdata));
+})
+export default router;
+
+add to index.js
+app.use(express.json());
+//check for json data input
+app.use('/users',userRoutes);
+
+
+
+
+
+finally to add a set of entry
+dbconnection.js
+//mongodb://localhost:27017/
+import mongoose from 'mongoose';
+const ConnectionString="mongodb://127.0.0.1:27017/myFirstdb";
+const mongoconnect=async ()=>{
+   try{
+     await mongoose.connect(ConnectionString);
+     console.log("MongoDB Connected");
+   }
+   catch(err){
+      console.log("MongoDb connection error : "+err);
+   }
+}
+export default mongoconnect;
+
+usersSchema.js
+import mongoose from "mongoose";
+const userSchema=new mongoose.Schema({
+    firstName:{
+        type:String,
+        required:true
+    },
+    lastName:{
+        type:String,
+        required:true
+    },
+    email:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    password:{
+        type:String,
+        required:true
+    },
+    role:{
+        type:String,
+        required:true,
+        default:'user'
+    }
+},{timestamps:true})
+const userModel=mongoose.model("user",userSchema);
+export default userModel;
+
+userRoutes.js
+import express from 'express';
+import userModel from '../models/UsersSchema.js';
+const router=express.Router();
+//store users in db
+router.post("/register",async (req,res)=>{
+    try{
+       let formdata=req.body;
+       const newUser=new userModel(formdata);
+       await newUser.save();
+       res.send(newUser);
+       res.send("User Registered Successfully")
+    }
+    catch(err){
+        console.log(err);
+        res.send("Something went wrong or already exists")
+    }
+})
+export default router;
+
+
+index.jsimport express from 'express';
+import mongoconnect from './dbconnection.js';
+import userRoutes from './routes/userRoutes.js'
+import userModel from './models/UsersSchema.js';
+const PORT=8899;
+const app=express();
+
+//check for json data input
+app.use(express.json());
+mongoconnect();
+app.get('/',(req,res)=>{
+    res.end('ser ther is currently working');
+})
+//check for json data input
+app.use('/users',userRoutes);
+app.listen(PORT,(err)=>{
+    if(err) throw err;
+    console.log(`server is currently working in the${PORT}`);
+})
