@@ -21,3 +21,15 @@ part2(express js_module)
 2.npm install express --save(to install node modules and express module)
 
 3.create index.js and modify package.json("type":"module"  and  "start":"nodemon index"
+
+part3(mongodb database connection)
+
+1.create folder
+
+2.npm init -y(to create package.json)
+
+3.npm install express mongoose --save(to include mongoose in the project folder)
+
+4.modify packsge.json and create index.js
+
+5.create schema,dbconnections,routers and add apis to handle different functions.
